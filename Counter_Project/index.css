@@ -1,0 +1,34 @@
+
+#logo{
+  font-size: 20px;
+  color: brown;
+  margin-bottom: 20px ;
+  text-align: center;
+}
+#track-count{
+  padding: 20px;
+}
+.bt{
+  width: 50px;
+  margin: 5px;
+  padding: 5px;
+  background-color: rgb(240, 198, 12);
+  border-radius: 5px;
+  border:2px solid white;
+  cursor: pointer;
+  
+}
+.buttons{
+  display: flex;
+  justify-content:space-evenly;
+  
+}
+.zero{
+  color:aqua;
+}
+.normal{
+  color:red;
+}
+.ten{
+  color:purple;
+}
