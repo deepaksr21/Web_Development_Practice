@@ -1,8 +1,8 @@
-# To-Do List
+# Todo List
 
-A dynamic To-Do List web application built using HTML, CSS, and JavaScript.
+A fully functional Todo List application built using HTML, CSS, and JavaScript.
 
-This project was created as a learning project to understand how JavaScript interacts with the DOM and how user actions can dynamically update a webpage.
+This project was built to strengthen my understanding of JavaScript fundamentals, DOM manipulation, event handling, state management, and browser storage.
 
 ## Features
 
@@ -10,60 +10,69 @@ This project was created as a learning project to understand how JavaScript inte
 - Add tasks using the Enter key
 - Mark tasks as completed
 - Undo completed tasks
-- Delete individual tasks
 - Edit existing tasks
 - Cancel editing
-- Delete a task when its edited text is empty
-- Clear all tasks
+- Delete individual tasks
+- Delete all tasks using the Clear button
 - Filter tasks:
   - All
   - Active
-  - Done
+  - Completed
 - Display task statistics:
-  - Total tasks
-  - Completed tasks
-  - Remaining tasks
-- Dynamically create and remove DOM elements
-- Event delegation for task buttons
-- Unique task IDs using `Date.now()`
+  - Total Tasks
+  - Completed Tasks
+  - Remaining Tasks
+- Persist tasks using `localStorage`
+- Persist the currently selected filter using `localStorage`
+- Tasks and UI state remain available after refreshing the page
 
 ## Technologies Used
 
 - HTML5
 - CSS3
 - JavaScript
+- Browser `localStorage`
 
 ## JavaScript Concepts Practiced
 
-This project helped me practice:
+This project helped me practice and understand:
 
-- DOM Manipulation
-- `querySelector()`
-- `createElement()`
-- `appendChild()`
-- `replaceWith()`
-- `remove()`
-- `classList`
-- `dataset`
-- Event Listeners
-- Keyboard Events
-- Mouse Events
-- Event Delegation
+- Variables and data types
 - Arrays
 - Objects
+- Array of objects
+- Functions
+- Function parameters and arguments
+- Callback functions
 - `forEach()`
 - `filter()`
-- Arrow Functions
-- Template Literals
-- Conditional Statements
-- Functions
-- Array Mutation
-- Object Properties
-- Passing Arrays as Function Arguments
+- `map()`
+- DOM manipulation
+- `createElement()`
+- `appendChild()`
+- `querySelector()`
+- `classList`
+- Event listeners
+- Event delegation
+- `event.target`
+- `event.currentTarget`
+- `parentElement`
+- `dataset`
+- `data-*` attributes
+- JSON
+- `JSON.stringify()`
+- `JSON.parse()`
+- `localStorage`
+- State management
+- Conditional rendering
+- UI rendering
+- Separating application data from UI
 
-## Task Data Structure
+## Application Structure
 
-Each task is stored as an object:
+The application maintains tasks as an array of objects.
+
+Each task contains:
 
 ```javascript
 {

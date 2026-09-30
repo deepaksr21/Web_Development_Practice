@@ -4,7 +4,20 @@ const add_button = user_area.querySelector('#add_button');
 const items_container=document.querySelector('#items_container');
 const stats_container=document.querySelector('#stats_container');
 let filter_container=document.querySelector('#filter_container');
+
+
 let tasks = [];
+let currentFilter="all";
+
+loadTasks();
+function loadTasks(){
+    let tasks_array=localStorage.getItem("tasks_array");
+    if(tasks_array){
+        tasks=JSON.parse(tasks_array);
+        currentFilter=localStorage.getItem("currentFilter");
+        updateUI();
+    }
+}
 
 
 input_text.addEventListener("keydown",(event)=>{
@@ -12,12 +25,65 @@ input_text.addEventListener("keydown",(event)=>{
         addButton();
     }
 })
+
 add_button.addEventListener("click", () => {
     addButton();
     
 });
 
 
+function addTask(newTask){
+      tasks.push(newTask);
+}
+
+function removeTask(itemId){
+    tasks=tasks.filter(task => task.id!==itemId);
+}
+
+function toggleTask(itemId){
+    tasks.forEach((task)=>{
+        if(itemId===task.id){
+            task.completed=!task.completed; 
+            
+        }
+    })
+}
+
+function clearTasks(){
+    tasks.length=0;
+}
+
+function modifyTask(itemId,modifiedText){
+    tasks.forEach(task=>{
+        if(task.id===itemId){
+            task.text=modifiedText;
+        }
+    })
+}
+
+function saveTasks(){
+    localStorage.setItem("tasks_array",JSON.stringify(tasks));
+    localStorage.setItem("currentFilter",currentFilter);
+
+}
+
+function getFilteredTasks(){
+    if(currentFilter==="all") return tasks;
+    else if(currentFilter==="active"){
+        let filteredTasks=tasks.filter(task=> !task.completed);
+        return filteredTasks;
+    }else{
+        let filteredTasks=tasks.filter(task=> task.completed);
+        return filteredTasks;
+    }
+
+}
+
+function updateUI(){
+    renderstats();
+    rendertasks(getFilteredTasks());
+    
+}
 
 function addButton(){
     let task = input_text.value.trim();
@@ -29,14 +95,12 @@ function addButton(){
             text: task,
             completed: false
         }; 
-
-        tasks.push(newTask);
-        rendertasks(tasks);
-        renderstats();
+        addTask(newTask);
+        saveTasks();
+        updateUI();
+        input_text.value = "";
 
     }
-
-    input_text.value = "";
 }
 
 function renderstats(){
@@ -69,21 +133,20 @@ function renderstats(){
         stats_container.appendChild(p2);
         stats_container.appendChild(p3);
     }
-
-
-
 }
 
 
 filter_container.addEventListener("click",event =>{
     if(event.target.classList.contains("show_all")){
-        rendertasks(tasks);
+        currentFilter="all";
+        updateUI();
+       
     }else if(event.target.classList.contains("show_active")){
-        let filteredTasks=tasks.filter(task=> !task.completed);
-        rendertasks(filteredTasks);
+        currentFilter="active";
+        updateUI();
     }else if(event.target.classList.contains("show_completed")){
-        let filteredTasks=tasks.filter(task=> task.completed);
-        rendertasks(filteredTasks);
+        currentFilter="completed";
+        updateUI();
     }
     
 })
@@ -122,8 +185,6 @@ function rendertasks(displayTasks){
         filter_container.appendChild(bt1);
         filter_container.appendChild(bt2);
         filter_container.appendChild(bt3);
-
-
     }else{
         let bt1=filter_container.querySelector(".show_all");
         let bt2=filter_container.querySelector(".show_active");
@@ -161,47 +222,35 @@ function rendertasks(displayTasks){
         div.appendChild(button1);
         div.appendChild(button2);
         div.appendChild(button3);
-        items_container.appendChild(div);
-
-
-    
+        items_container.appendChild(div);  
    });
 }
+
 user_area.addEventListener("click",event=>{
     if(event.target.id==="clear_button"){
-        tasks.length=0;
-        rendertasks(tasks);
-        renderstats();
+        clearTasks();
+        saveTasks();
+        updateUI();
 
     }})
+
 items_container.addEventListener("click",(event)=>
 {
     if(event.target.tagName==="BUTTON" && event.target.classList.contains("remove_button")){
         let item=event.target.parentElement;
         let itemId=Number(item.dataset.id);
-        tasks=tasks.filter(task => task.id!==itemId);
-        rendertasks(tasks);
-        renderstats();
-
-        
+        removeTask(itemId);
+        saveTasks();
+        updateUI();        
     }
-
     else if(event.target.tagName==="BUTTON" && (event.target.classList.contains("completed_button") || event.target.classList.contains("undo_button"))){
         let item=event.target.parentElement;
         let itemId=Number(item.dataset.id);
-        tasks.forEach((task)=>{
-            if(itemId===task.id){
-                task.completed=!task.completed; 
-                
-            }
-        })
-        rendertasks(tasks);
-         renderstats();
-        
-
+        toggleTask(itemId);
+        saveTasks();
+        updateUI();    
     }
-    
-    else if(event.target.tagName==="BUTTON" && event.target.classList.contains("edit_button")){
+     else if(event.target.tagName==="BUTTON" && event.target.classList.contains("edit_button")){
         let item=event.target.parentElement;
         event.target.innerText="Save";
 
@@ -232,7 +281,6 @@ items_container.addEventListener("click",(event)=>
                 if(task.completed===true){
                     p.classList.add("completed");
                 }
-
             }
             
         })
@@ -243,6 +291,7 @@ items_container.addEventListener("click",(event)=>
     }
     else if(event.target.tagName==="BUTTON" && event.target.classList.contains("save_button")){
         let item=event.target.parentElement;
+        let itemId=Number(item.dataset.id);
         let input=item.querySelector("input");
 
         let modifiedText=input.value.trim();
@@ -251,25 +300,18 @@ items_container.addEventListener("click",(event)=>
             event.target.classList.remove("save_button");
             event.target.classList.add("edit_button");
             
+            modifyTask(itemId,modifiedText);
             
-            tasks.forEach(task=>{
-                if(task.id==item.dataset.id){
-                    task.text=modifiedText;
-                }
-            })
+            saveTasks();
             let cancel_button=item.querySelector(".cancel_button");
             if(cancel_button){
                 cancel_button.remove();
             }
-            
-            let p=document.createElement("p");
-            p.innerText=modifiedText;
-            input.replaceWith(p);
+                
         }else if(modifiedText===""){
-            tasks=tasks.filter(task => task.id!==Number(item.dataset.id ));
-            rendertasks(tasks);
-            renderstats();
-
+            removeTask(itemId);
+            saveTasks();
         }
+        updateUI();
     }
 })
